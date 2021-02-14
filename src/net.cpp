@@ -24,9 +24,9 @@ CNode nodeLocalHost(INVALID_SOCKET, CAddress("127.0.0.1", nLocalServices));
 CNode* pnodeLocalHost = &nodeLocalHost;
 bool fShutdown = false;
 array<bool, 10> vfThreadRunning;
-vector<CNode*> vNodes;
+vector<CNode*> vNodes;  //建立新连接时加入
 CCriticalSection cs_vNodes;
-map<vector<unsigned char>, CAddress> mapAddresses;
+map<vector<unsigned char>, CAddress> mapAddresses; //添加新地址时加入
 CCriticalSection cs_mapAddresses;
 map<CInv, CDataStream> mapRelay;
 deque<pair<int64, CInv> > vRelayExpiration;
@@ -681,6 +681,7 @@ void ThreadOpenConnections2(void* parg)
         // Wait
         vfThreadRunning[1] = false;
         Sleep(500);
+        
         while (vNodes.size() >= nMaxConnections || vNodes.size() >= mapAddresses.size())
         {
             CheckForShutdown(1);
@@ -693,7 +694,7 @@ void ThreadOpenConnections2(void* parg)
         // Make a list of unique class C's
         unsigned char pchIPCMask[4] = { 0xff, 0xff, 0xff, 0x00 };
         unsigned int nIPCMask = *(unsigned int*)pchIPCMask;
-        vector<unsigned int> vIPC;
+        vector<unsigned int> vIPC; // 用来记录不同c类ip的网络地址
         CRITICAL_BLOCK(cs_mapAddresses)
         {
             vIPC.reserve(mapAddresses.size());
@@ -706,6 +707,7 @@ void ThreadOpenConnections2(void* parg)
 
                 // Taking advantage of mapAddresses being in sorted order,
                 // with IPs of the same class C grouped together.
+                //利用了map自动排序的特性，相同c类地址的ip会自动聚集在一起
                 unsigned int ipC = addr.ip & nIPCMask;
                 if (ipC != nPrev)
                     vIPC.push_back(nPrev = ipC);
@@ -721,6 +723,10 @@ void ThreadOpenConnections2(void* parg)
         // A lone node in a class C will get as much attention as someone holding all 255
         // IPs in another class C.
         //
+
+        //大概意思是攻击者伪造的ip通常会聚合在一个c类地址中，这会 让这个c类地址被引起注意，
+        //不会导致整个ip地址空间引起注意，
+        //一个在c类节点的单独空间会跟拥有255个ip地址空间的c类节点引起一样的关注度。
         bool fSuccess = false;
         int nLimit = vIPC.size();
         while (!fSuccess && nLimit-- > 0)

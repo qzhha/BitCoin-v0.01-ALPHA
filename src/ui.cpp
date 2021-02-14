@@ -1242,8 +1242,8 @@ CAboutDialog::CAboutDialog(wxWindow* parent) : CAboutDialogBase(parent)
 
     // Workaround until upgrade to wxWidgets supporting UTF-8
     wxString str = m_staticTextMain->GetLabel();
-    if (str.Find('�') != wxNOT_FOUND)
-        str.Remove(str.Find('�'), 1);
+    if (str.Find('�') != wxNOT_FOUND)
+        str.Remove(str.Find('�'), 1);
     m_staticTextMain->SetLabel(str);
 }
 
@@ -2966,6 +2966,8 @@ bool CMyApp::OnInit2()
     //
     string strErrors;
     int64 nStart, nEnd;
+
+    //QueryPerformanceCounter 用来计算加载地址,索引和钱包地址的时间 for debug
 
     printf("Loading addresses...\n");
     QueryPerformanceCounter((LARGE_INTEGER*)&nStart);
