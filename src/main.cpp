@@ -2429,23 +2429,23 @@ bool SelectCoins(int64 nTargetValue, set<CWalletTx*>& setCoinsRet)
                 continue;
             if (n < nTargetValue)
             {
-                vValue.push_back(make_pair(n, pcoin));
+                vValue.push_back(make_pair(n, pcoin)); //收集小于nTargetValue的CWalletTx
                 nTotalLower += n;
             }
             else if (n == nTargetValue)
             {
-                setCoinsRet.insert(pcoin);
+                setCoinsRet.insert(pcoin); //满足nTargetValue 直接返回
                 return true;
             }
-            else if (n < nLowestLarger)
+            else if (n < nLowestLarger) //记录最钱包里最小的值
             {
-                nLowestLarger = n;
+                nLowestLarger = n;  
                 pcoinLowestLarger = pcoin;
             }
         }
     }
 
-    if (nTotalLower < nTargetValue)
+    if (nTotalLower < nTargetValue) //如果统计的值小于目标值，返回当前最小的值
     {
         if (pcoinLowestLarger == NULL)
             return false;
