@@ -948,7 +948,8 @@ bool Solver(const CScript& scriptPubKey, vector<pair<opcodetype, valtype> >& vSo
             {
                 break;
             }
-            else if (opcode2 == OP_PUBKEY)
+            // template matching params
+            else if (opcode2 == OP_PUBKEY) 
             {
                 if (vch1.size() <= sizeof(uint256))
                     break;

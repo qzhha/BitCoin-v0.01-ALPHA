@@ -193,9 +193,9 @@ public:
 class CTxIn
 {
 public:
-    COutPoint prevout;
-    CScript scriptSig;
-    unsigned int nSequence;
+    COutPoint prevout; // [ 来自前一个Tx(hash) 的 第 n 个out]
+    CScript scriptSig; // 输入的脚本 [验证私钥]
+    unsigned int nSequence; //后续版本中作软分叉用途
 
     CTxIn()
     {
@@ -274,8 +274,8 @@ public:
 class CTxOut
 {
 public:
-    int64 nValue;
-    CScript scriptPubKey;
+    int64 nValue; 
+    CScript scriptPubKey; //输出公钥 []
 
 public:
     CTxOut()
@@ -358,7 +358,7 @@ class CTransaction
 {
 public:
     int nVersion;
-    vector<CTxIn> vin;
+    vector<CTxIn> vin; 
     vector<CTxOut> vout;
     int nLockTime;
 

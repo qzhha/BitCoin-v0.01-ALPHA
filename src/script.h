@@ -479,6 +479,7 @@ public:
          return fRet;
     }
 
+    //读取对应的操作符。如果操作符是读取数据，就插入到vchRet
     bool GetOp(const_iterator& pc, opcodetype& opcodeRet, vector<unsigned char>& vchRet) const
     {
         opcodeRet = OP_INVALIDOPCODE;
